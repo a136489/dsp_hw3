@@ -1,19 +1,25 @@
 import sys
 
-file = open(sys.argv[1] , 'r' , encoding = 'big5hkscs')
-dictionary = dict()
-for line in file:
-	temp = line.split()
-	character = temp[0]
-	Zhuyin_list = temp[1].split('\\')
-	for Zhuyin in Zhuyin_list:
-		if Zhuyin[0] not in dictionary:
-			dictionary[Zhuyin[0]] = set()
-		dictionary[Zhuyin[0]].add(character)
+input_file = sys.argv[1]
+output_file = sys.argv[2] 
 
-file = open(sys.argv[2] , 'w' , encoding = 'big5hkscs')
-for (Zhuyin , character_set) in dictionary.items():
-	character_list = list(character_set)
-	print(Zhuyin + '\t' + ' '.join(character_list) , file = file)
-	for character in character_list:
-		print(character + '\t' + character , file = file)
+# constructing map
+file = open(input_file, 'r', encoding='big5')
+mapping = {}
+for line in file:
+	tmp = line.split()
+	word = tmp[0]
+	ZhuYins = tmp[1].split('/')
+	
+	for ZY in ZhuYins:
+		if ZY[0] not in mapping.keys():
+			mapping[ZY[0]] = set()
+		mapping[ZY[0]].add(word)
+
+	mapping[word] = {word}
+
+# output
+file = open(output_file, 'w', encoding='big5')
+for (ZY, words) in mapping.items():
+	line = ZY + '\t' + ' '.join(words)
+	print(line, file = file)
